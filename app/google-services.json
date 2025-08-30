@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "951222101817",
+    "project_id": "virtual-event-platform-ae620",
+    "storage_bucket": "virtual-event-platform-ae620.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:951222101817:android:a666133f95b46e9c5b6ae8",
+        "android_client_info": {
+          "package_name": "com.java.virtualeventplatform"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "951222101817-rdc86tl2ghuhacg71j49kvk0h0cq0ghf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.java.virtualeventplatform",
+            "certificate_hash": "e517d0a128c52b07c80a0770b11544d39726c7db"
+          }
+        },
+        {
+          "client_id": "951222101817-2notfv3p4l6v5vephrq436kbnscjtr8n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaAi0tHnx19NdVHwCjJ6gOdQFQ-pyJDnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "951222101817-2notfv3p4l6v5vephrq436kbnscjtr8n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
