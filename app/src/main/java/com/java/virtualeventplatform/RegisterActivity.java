@@ -40,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
     // 🔑 Replace with your SendGrid API Key
-    private static final String SENDGRID_API_KEY = "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";
+    private static final String SENDGRID_API_KEY = "";
     private static final String FROM_EMAIL = "mayankkumarsaini7465@gmail.com";
 
     @Override
