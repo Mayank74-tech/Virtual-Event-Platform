@@ -2,21 +2,25 @@ package com.java.virtualeventplatform;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
-
-public class CreateEventActivity extends AppCompatActivity {
+import java.util.Locale;
+import java.util.Map;public class CreateEventActivity extends AppCompatActivity {
     private EditText titleEt, descEt, dateEt;
     private Button createBtn;
     private FirebaseFirestore db;
@@ -25,26 +29,20 @@ public class CreateEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_event); // ✅ attach layout
+        setContentView(R.layout.activity_create_event);
 
-        // ✅ init Firebase
+        // init Firebase
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // ✅ bind views
+        // bind views
         titleEt = findViewById(R.id.titleEt);
         descEt = findViewById(R.id.descEt);
         dateEt = findViewById(R.id.dateEt);
         createBtn = findViewById(R.id.createBtn);
 
-        // ✅ button click listener
-        createBtn.setOnClickListener(v -> createEvent());
-    }
-
-    private void createEvent() {
-        String title = titleEt.getText().toString().trim();
-        String desc = descEt.getText().toString().trim();
-
+        // 🚀 Date picker listener should be here
+        dateEt.setFocusable(false); // disable keyboard
         dateEt.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -54,16 +52,23 @@ public class CreateEventActivity extends AppCompatActivity {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     CreateEventActivity.this,
                     (view, selectedYear, selectedMonth, selectedDay) -> {
-                        // Format the date (month is 0-based so add 1)
-                        String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+                        String selectedDate = String.format(Locale.getDefault(),
+                                "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
                         dateEt.setText(selectedDate);
-                    },
-                    year, month, day
-            );
+                    }, year, month, day);
+
             datePickerDialog.show();
         });
 
+        // button click listener
+        createBtn.setOnClickListener(v -> createEvent());
+    }
+
+    private void createEvent() {
+        String title = titleEt.getText().toString().trim();
+        String desc = descEt.getText().toString().trim();
         String date = dateEt.getText().toString().trim();
+
         if (title.isEmpty() || desc.isEmpty() || date.isEmpty()) {
             Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
             return;
@@ -77,7 +82,7 @@ public class CreateEventActivity extends AppCompatActivity {
         String hostId = mAuth.getCurrentUser().getUid();
         String eventId = db.collection("Events").document().getId();
 
-        // ✅ generate random password
+        // generate random password
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 6; i++) {
@@ -86,7 +91,7 @@ public class CreateEventActivity extends AppCompatActivity {
         }
         String eventPassword = sb.toString();
 
-        // ✅ store event data
+        // store event data
         Map<String, Object> event = new HashMap<>();
         event.put("eventId", eventId);
         event.put("title", title);
@@ -110,3 +115,4 @@ public class CreateEventActivity extends AppCompatActivity {
                 );
     }
 }
+

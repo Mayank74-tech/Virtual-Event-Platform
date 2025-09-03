@@ -1,6 +1,5 @@
 package com.java.virtualeventplatform.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +14,18 @@ import com.java.virtualeventplatform.R;
 import com.java.virtualeventplatform.models.Event;
 
 import java.util.List;
+
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
+
     private List<Event> eventList;
     private OnItemClickListener listener;
 
+    // ✅ Click listener interface
     public interface OnItemClickListener {
         void onItemClick(Event event);
     }
 
+    // ✅ Constructor: data + listener
     public EventAdapter(List<Event> eventList, OnItemClickListener listener) {
         this.eventList = eventList;
         this.listener = listener;
@@ -44,7 +47,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     @Override
     public int getItemCount() {
-        return eventList.size();
+        return eventList != null ? eventList.size() : 0;
+    }
+
+    // ✅ Update dataset dynamically
+    public void updateEvents(List<Event> newEvents) {
+        this.eventList = newEvents;
+        notifyDataSetChanged();
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
@@ -61,11 +70,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         public void bind(final Event event, final OnItemClickListener listener) {
             title.setText(event.getTitle());
             date.setText(event.getDate());
-            Glide.with(image.getContext()).load(event.getImageUrl()).into(image);
 
-            itemView.setOnClickListener(v -> listener.onItemClick(event));
+            // ✅ Load image with Glide
+            if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
+                Glide.with(image.getContext())
+                        .load(event.getImageUrl())
+                        .placeholder(R.drawable.ic_event_placeholder)
+                        .into(image);
+            } else {
+                image.setImageResource(R.drawable.ic_event_placeholder);
+            }
 
+            // ✅ Set click listener
+            itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onItemClick(event);
+            });
         }
     }
-
 }

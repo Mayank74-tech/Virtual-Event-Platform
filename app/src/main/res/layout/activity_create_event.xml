@@ -1,52 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateEventActivity"
-    android:padding="16dp">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
+    android:padding="24dp"
+    android:background="@color/white"
+    android:layout_marginTop="20dp"
+    tools:context=".CreateEventActivity">
 
-        <EditText
-            android:id="@+id/titleEt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Event Title"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+    <!-- Event Title -->
+    <EditText
+        android:id="@+id/titleEt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Event Title"
+        android:background="@drawable/edittext_filled_background"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/gray_600"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <EditText
-            android:id="@+id/descEt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Event Description"
-            app:layout_constraintTop_toBottomOf="@id/titleEt"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+    <!-- Event Description -->
+    <EditText
+        android:id="@+id/descEt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Event Description"
+        android:background="@drawable/edittext_filled_background"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/gray_600"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:maxLines="5"
+        app:layout_constraintTop_toBottomOf="@id/titleEt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
 
-        <EditText
-            android:id="@+id/dateEt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Event Date (yyyy-MM-dd)"
-            app:layout_constraintTop_toBottomOf="@id/descEt"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+    <EditText
+        android:id="@+id/dateEt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Event Date"
+        android:background="@drawable/edittext_filled_background"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/gray_600"
+        android:focusable="false"
+        android:clickable="true"
+        app:layout_constraintTop_toBottomOf="@id/descEt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
 
-        <Button
-            android:id="@+id/createBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Event"
-            app:layout_constraintTop_toBottomOf="@id/dateEt"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Create Button -->
+    <Button
+        android:id="@+id/createBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Create Event"
+        android:backgroundTint="@color/purple_500"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/dateEt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
