@@ -98,7 +98,7 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             if (snapshots != null) {
-                messageList.clear();
+
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                     Message msg = dc.getDocument().toObject(Message.class);
                     messageList.add(msg);

@@ -14,9 +14,7 @@ import com.java.virtualeventplatform.models.Message;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
+import java.util.Locale;public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
 
@@ -31,11 +29,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public int getItemViewType(int position) {
         Message msg = messageList.get(position);
-        if (msg.getSenderId().equals(currentUserId)) {
-            return VIEW_TYPE_SENT;
-        } else {
-            return VIEW_TYPE_RECEIVED;
-        }
+        return msg.getSenderId().equals(currentUserId) ? VIEW_TYPE_SENT : VIEW_TYPE_RECEIVED;
     }
 
     @NonNull
@@ -54,13 +48,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        Message msg = messageList.get(position);
-        holder.bind(msg, currentUserId);
+        holder.bind(messageList.get(position), currentUserId);
     }
 
     @Override
     public int getItemCount() {
         return messageList.size();
+    }
+
+    // ✅ Append a single message
+    public void addMessage(Message message) {
+        messageList.add(message);
+        notifyItemInserted(messageList.size() - 1);
+    }
+
+    // ✅ Reset entire list (when loading chat history)
+    public void setMessages(List<Message> newMessages) {
+        this.messageList.clear();
+        this.messageList.addAll(newMessages);
+        notifyDataSetChanged();
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder {
@@ -70,7 +76,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             super(itemView);
             messageText = itemView.findViewById(R.id.tvMessage);
             timeText = itemView.findViewById(R.id.tvTime);
-
             if (viewType == VIEW_TYPE_RECEIVED) {
                 senderName = itemView.findViewById(R.id.tvSender);
             }

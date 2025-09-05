@@ -95,6 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Join Chat"
+                    android:textColor="@color/white"
                     android:visibility="gone"
                     android:layout_marginBottom="12dp" />
 
@@ -104,6 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Join Video"
+                    android:textColor="@color/white"
                     android:visibility="gone" />
             </LinearLayout>
 
