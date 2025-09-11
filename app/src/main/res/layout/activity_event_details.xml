@@ -88,6 +88,14 @@
                 android:divider="?attr/dividerVertical"
                 android:showDividers="middle"
                 android:dividerPadding="12dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/joinEventButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Join Event"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/joinChatButton"

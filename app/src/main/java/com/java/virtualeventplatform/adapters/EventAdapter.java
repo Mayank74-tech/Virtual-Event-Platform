@@ -57,7 +57,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView title, date;
+        TextView title, date,time;
         ImageView image;
 
         public EventViewHolder(@NonNull View itemView) {
@@ -65,11 +65,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             title = itemView.findViewById(R.id.eventTitle);
             date = itemView.findViewById(R.id.eventDate);
             image = itemView.findViewById(R.id.eventImage);
+            time = itemView.findViewById(R.id.eventTime);
         }
 
         public void bind(final Event event, final OnItemClickListener listener) {
             title.setText(event.getTitle());
             date.setText(event.getDate());
+            time.setText(event.getTime());
 
             // ✅ Load image with Glide
             if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {

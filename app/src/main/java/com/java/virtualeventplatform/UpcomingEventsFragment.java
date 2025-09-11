@@ -45,6 +45,7 @@ public class UpcomingEventsFragment extends Fragment {
             if (getContext() != null) {
                 Intent intent = new Intent(getContext(), EventDetailsActivity.class);
                 intent.putExtra("eventId", event.getEventId());
+                intent.putExtra("fromJoined", false);
                 startActivity(intent);
             }
         });

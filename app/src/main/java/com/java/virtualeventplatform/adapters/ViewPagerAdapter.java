@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.java.virtualeventplatform.JoinedEventsFragment;
 import com.java.virtualeventplatform.MyEventsFragment;
 import com.java.virtualeventplatform.UpcomingEventsFragment;
 
@@ -22,6 +23,8 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
                 return new MyEventsFragment();
             case 1:
                 return new UpcomingEventsFragment();
+            case 2:
+                return new JoinedEventsFragment();
             default:
                 // fallback to avoid crashes on unexpected index
                 return new MyEventsFragment();
@@ -30,6 +33,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2; // We have 2 tabs: My Events & Upcoming
+        return 3; // We have 2 tabs: My Events & Upcoming
     }
 }

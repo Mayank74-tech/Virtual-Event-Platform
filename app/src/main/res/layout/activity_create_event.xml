@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    android:background="@color/white"
+    android:background="@drawable/bg_gradient"
+
     android:layout_marginTop="20dp"
     tools:context=".CreateEventActivity">
 
@@ -62,17 +63,36 @@
         android:layout_marginTop="16dp" />
 
     <!-- Create Button -->
+
+    <EditText
+        android:id="@+id/timeEt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="84dp"
+        android:background="@drawable/edittext_filled_background"
+        android:clickable="true"
+        android:focusable="false"
+        android:hint="Event Time"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/gray_600"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/descEt" />
+
     <Button
         android:id="@+id/createBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Create Event"
+        android:layout_marginTop="112dp"
         android:backgroundTint="@color/purple_500"
-        android:textColor="@android:color/white"
         android:padding="12dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/dateEt"
+        android:text="Create Event"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/dateEt" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

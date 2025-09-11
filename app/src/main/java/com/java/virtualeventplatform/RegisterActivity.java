@@ -213,17 +213,23 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
     private void saveUserToFirestore(FirebaseUser user) {
+        if (user == null) return;
+
         String userId = user.getUid();
+        String userEmail = user.getEmail() != null ? user.getEmail() : "No Email";
+        String userName = user.getDisplayName() != null ? user.getDisplayName() : "Anonymous";
 
         Map<String, Object> userData = new HashMap<>();
-        userData.put("email", user.getEmail());
-        userData.put("name", user.getDisplayName() != null ? user.getDisplayName() : "");
+        userData.put("email", userEmail);
+        userData.put("name", userName);
         userData.put("createdAt", System.currentTimeMillis());
 
-        db.collection("Users").document(userId).set(userData)
+        db.collection("Users").document(userId)
+                .set(userData)
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "User saved"))
                 .addOnFailureListener(e -> Log.e("Firestore", "Error saving user", e));
     }
+
 
 
 

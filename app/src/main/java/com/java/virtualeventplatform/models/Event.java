@@ -8,10 +8,12 @@ public class Event implements Parcelable {
     private String title;
     private String description;
     private String date;
+    private String time;
     private String hostId;
     private String imageUrl;
     private String password;   // ✅ New field
-    private String status;     // ✅ upcoming | live | ended
+    private String status;
+    // ✅ upcoming | live | ended
 
     // Empty constructor (required for Firestore)
     public Event() {}
@@ -22,6 +24,7 @@ public class Event implements Parcelable {
         this.title = title;
         this.description = description;
         this.date = date;
+        this.time = time;
         this.hostId = hostId;
         this.imageUrl = imageUrl;
         this.password = password;
@@ -40,6 +43,8 @@ public class Event implements Parcelable {
 
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
+    public String getTime() { return time; }
+    public void setTime(String time) { this.time = time; }
 
     public String getHostId() { return hostId; }
     public void setHostId(String hostId) { this.hostId = hostId; }
@@ -59,6 +64,7 @@ public class Event implements Parcelable {
         title = in.readString();
         description = in.readString();
         date = in.readString();
+        time=in.readString();
         hostId = in.readString();
         imageUrl = in.readString();
         password = in.readString();
@@ -88,9 +94,12 @@ public class Event implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(description);
         parcel.writeString(date);
+        parcel.writeString(time);
         parcel.writeString(hostId);
         parcel.writeString(imageUrl);
         parcel.writeString(password);
         parcel.writeString(status);
     }
+
+
 }

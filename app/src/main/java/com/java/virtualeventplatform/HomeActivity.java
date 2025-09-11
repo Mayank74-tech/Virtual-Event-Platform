@@ -34,18 +34,21 @@ public class HomeActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
 
-        // Set up the adapter
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
-        // Attach TabLayout with ViewPager
+
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 0) {
                 tab.setText("My Events");
-            } else {
+            } else if (position == 1) {
                 tab.setText("Upcoming");
+            } else {
+                tab.setText("Joined");
             }
         }).attach();
+
 
         ExtendedFloatingActionButton fabAddEvent = findViewById(R.id.fabAddEvent);
 

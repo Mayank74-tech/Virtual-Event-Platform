@@ -1,8 +1,8 @@
 package com.java.virtualeventplatform;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -10,9 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,8 +17,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;public class CreateEventActivity extends AppCompatActivity {
-    private EditText titleEt, descEt, dateEt;
+import java.util.Map;
+
+public class CreateEventActivity extends AppCompatActivity {
+    private EditText titleEt, descEt, dateEt, timeEt;
     private Button createBtn;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -39,10 +38,11 @@ import java.util.Map;public class CreateEventActivity extends AppCompatActivity 
         titleEt = findViewById(R.id.titleEt);
         descEt = findViewById(R.id.descEt);
         dateEt = findViewById(R.id.dateEt);
+        timeEt = findViewById(R.id.timeEt);
         createBtn = findViewById(R.id.createBtn);
 
-        // 🚀 Date picker listener should be here
-        dateEt.setFocusable(false); // disable keyboard
+        // 🚀 Date picker
+        dateEt.setFocusable(false);
         dateEt.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -60,6 +60,29 @@ import java.util.Map;public class CreateEventActivity extends AppCompatActivity 
             datePickerDialog.show();
         });
 
+        // ⏰ Time picker
+        timeEt.setFocusable(false);
+        timeEt.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+
+            TimePickerDialog timePickerDialog = new TimePickerDialog(
+                    CreateEventActivity.this,
+                    (view, selectedHour, selectedMinute) -> {
+                        // Convert to 12-hour format
+                        String amPm = (selectedHour >= 12) ? "PM" : "AM";
+                        int hour12 = (selectedHour % 12 == 0) ? 12 : selectedHour % 12;
+
+                        String selectedTime = String.format(Locale.getDefault(),
+                                "%02d:%02d %s", hour12, selectedMinute, amPm);
+                        timeEt.setText(selectedTime);
+                    }, hour, minute, false // false = 12-hour format with AM/PM
+            );
+
+            timePickerDialog.show();
+        });
+
         // button click listener
         createBtn.setOnClickListener(v -> createEvent());
     }
@@ -68,8 +91,9 @@ import java.util.Map;public class CreateEventActivity extends AppCompatActivity 
         String title = titleEt.getText().toString().trim();
         String desc = descEt.getText().toString().trim();
         String date = dateEt.getText().toString().trim();
+        String time = timeEt.getText().toString().trim();
 
-        if (title.isEmpty() || desc.isEmpty() || date.isEmpty()) {
+        if (title.isEmpty() || desc.isEmpty() || date.isEmpty() || time.isEmpty()) {
             Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -97,6 +121,7 @@ import java.util.Map;public class CreateEventActivity extends AppCompatActivity 
         event.put("title", title);
         event.put("description", desc);
         event.put("date", date);
+        event.put("time", time); // ✅ store time
         event.put("hostId", hostId);
         event.put("imageUrl", "");
         event.put("password", eventPassword);
@@ -106,7 +131,9 @@ import java.util.Map;public class CreateEventActivity extends AppCompatActivity 
                 .addOnSuccessListener(aVoid -> {
                     new AlertDialog.Builder(this)
                             .setTitle("Event Created!")
-                            .setMessage("Share this password with participants:\n\n" + eventPassword)
+                            .setMessage("Event Password: " + eventPassword +
+                                    "\nDate: " + date +
+                                    "\nTime: " + time)
                             .setPositiveButton("OK", (dialog, which) -> finish())
                             .show();
                 })
@@ -115,4 +142,3 @@ import java.util.Map;public class CreateEventActivity extends AppCompatActivity 
                 );
     }
 }
-
