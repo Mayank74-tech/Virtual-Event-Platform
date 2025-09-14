@@ -22,7 +22,6 @@ import com.java.virtualeventplatform.models.Event;
 import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
 
 public class MyEventsFragment extends Fragment {
 
@@ -67,12 +66,12 @@ public class MyEventsFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (task.getResult().isEmpty()) {
-                            Timber.tag("MyEventsFragment").e("⚠️ No events found for user: %s", currentUserId);
+
                             Toast.makeText(getContext(), "No events created by you", Toast.LENGTH_SHORT).show();
                         } else {
                             eventList.clear();
                             for (DocumentSnapshot doc : task.getResult()) {
-                                Timber.tag("MyEventsFragment").d("Doc found: " + doc.getId() + " → " + doc.getData());
+
                                 Event event = doc.toObject(Event.class);
                                 if (event != null) {
                                     event.setEventId(doc.getId());
@@ -82,7 +81,7 @@ public class MyEventsFragment extends Fragment {
                             eventAdapter.updateEvents(eventList);
                         }
                     } else {
-                        Timber.tag("MyEventsFragment").e(task.getException(), "❌ Error: ");
+
                         Toast.makeText(getContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });

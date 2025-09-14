@@ -45,7 +45,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.4.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
-    implementation("org.jitsi.react:jitsi-meet-sdk:8.2.2")
+
+    implementation("io.agora.rtc:full-sdk:4.2.6") 
+
+
     implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

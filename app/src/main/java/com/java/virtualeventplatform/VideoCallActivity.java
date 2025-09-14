@@ -1,45 +1,66 @@
 package com.java.virtualeventplatform;
 
 import android.os.Bundle;
+import android.view.SurfaceView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.jitsi.meet.sdk.JitsiMeetActivity;
-import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import io.agora.rtc2.ChannelMediaOptions;
+import io.agora.rtc2.IRtcEngineEventHandler;
+import io.agora.rtc2.RtcEngine;
+import io.agora.rtc2.video.VideoCanvas;
 
 public class VideoCallActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private String eventId, currentUserId, eventPassword, hostId;
 
+    private RtcEngine rtcEngine;
+    private static final String APP_ID = "aee0d08cdbf34d7596f451eed8007c6a"; // copy from console
+
+    private FrameLayout localContainer, remoteContainer;
+
+    // Agora event handler
+    private final IRtcEngineEventHandler mHandler = new IRtcEngineEventHandler() {
+        @Override
+        public void onUserJoined(int uid, int elapsed) {
+            runOnUiThread(() -> setupRemoteVideo(uid));
+        }
+
+        @Override
+        public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
+            runOnUiThread(() ->
+                    Toast.makeText(VideoCallActivity.this,
+                            "Joined channel: " + channel, Toast.LENGTH_SHORT).show());
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_video_call);
 
+        // find UI containers
+        localContainer = findViewById(R.id.local_video_container);
+        remoteContainer = findViewById(R.id.remote_video_container);
 
         db = FirebaseFirestore.getInstance();
         currentUserId = FirebaseAuth.getInstance().getUid();
-
         eventId = getIntent().getStringExtra("eventId");
+
         if (eventId == null) {
-            Toast.makeText(this, "Missing Event ID for video room", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Missing Event ID", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // 🔹 Load event details (password + hostId)
+        // Load event details from Firestore
         db.collection("Events").document(eventId).get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
@@ -47,10 +68,8 @@ public class VideoCallActivity extends AppCompatActivity {
                         hostId = doc.getString("hostId");
 
                         if (currentUserId != null && currentUserId.equals(hostId)) {
-                            // ✅ Host: start video directly
-                            startVideo();
+                            startVideo(true);
                         } else {
-                            // ✅ Participant: ask for password
                             askForPassword();
                         }
                     } else {
@@ -59,7 +78,7 @@ public class VideoCallActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error loading event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     finish();
                 });
     }
@@ -67,24 +86,16 @@ public class VideoCallActivity extends AppCompatActivity {
     private void askForPassword() {
         EditText passwordInput = new EditText(this);
         passwordInput.setHint("Enter event password");
-        passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         new AlertDialog.Builder(this)
                 .setTitle("Event Password")
-                .setMessage("Please enter the event password to join.")
                 .setView(passwordInput)
                 .setPositiveButton("Join", (dialog, which) -> {
                     String entered = passwordInput.getText().toString().trim();
-                    if (entered.isEmpty()) {
-                        Toast.makeText(this, "Password cannot be empty!", Toast.LENGTH_SHORT).show();
-                        askForPassword(); // show again
-                        return;
-                    }
-
                     if (entered.equals(eventPassword)) {
-                        startVideo();
+                        startVideo(false);
                     } else {
-                        Toast.makeText(this, "Incorrect Password!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Incorrect password!", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 })
@@ -92,25 +103,45 @@ public class VideoCallActivity extends AppCompatActivity {
                 .show();
     }
 
-
-    private void startVideo() {
+    private void startVideo(boolean isHost) {
         try {
-            URL serverURL = new URL("https://meet.jit.si");
+            rtcEngine = RtcEngine.create(getBaseContext(), APP_ID, mHandler);
 
-            JitsiMeetConferenceOptions options = new JitsiMeetConferenceOptions.Builder()
-                    .setServerURL(serverURL)
-                    .setRoom(eventId)   // Room name = eventId
-                    .setSubject("Event Video Room")
-                    .setFeatureFlag("invite.enabled", false)
-                    .setFeatureFlag("chat.enabled", true)
-                    .setFeatureFlag("pip.enabled", true)
-                    .build();
+            // enable video
+            rtcEngine.enableVideo();
 
-            JitsiMeetActivity.launch(VideoCallActivity.this, options);
-            finish();
-        } catch (MalformedURLException e) {
+            // setup local video
+            SurfaceView localView = RtcEngine.CreateRendererView(getBaseContext());
+            localView.setZOrderMediaOverlay(true);
+            localContainer.addView(localView);
+            rtcEngine.setupLocalVideo(new VideoCanvas(localView, VideoCanvas.RENDER_MODE_HIDDEN, 0));
+
+            // join channel
+            ChannelMediaOptions options = new ChannelMediaOptions();
+            options.clientRoleType = isHost ? 1 : 2; // 1 = host, 2 = audience
+            rtcEngine.joinChannel(null, eventId, 0, options);
+
+        } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Agora init failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setupRemoteVideo(int uid) {
+        if (remoteContainer.getChildCount() > 0) return;
+
+        SurfaceView remoteView = RtcEngine.CreateRendererView(getBaseContext());
+        remoteContainer.addView(remoteView);
+        rtcEngine.setupRemoteVideo(new VideoCanvas(remoteView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (rtcEngine != null) {
+            rtcEngine.leaveChannel();
+            RtcEngine.destroy();
+            rtcEngine = null;
         }
     }
 }

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import timber.log.Timber;
+
 
 public class UpcomingEventsFragment extends Fragment {
     private RecyclerView recyclerView;

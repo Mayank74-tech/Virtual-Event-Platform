@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,10 +23,9 @@ import java.util.List;
 
 public class JoinedEventsFragment extends Fragment implements EventAdapter.OnItemClickListener {
 
-    private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private EventAdapter adapter;
-    private List<Event> joinedEvents = new ArrayList<>();
+    private final List<Event> joinedEvents = new ArrayList<>();
 
     private FirebaseFirestore db;
     private String currentUserId;
@@ -42,7 +40,7 @@ public class JoinedEventsFragment extends Fragment implements EventAdapter.OnIte
 
         View view = inflater.inflate(R.layout.fragment_joined_events, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerViewJoinedEvents);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewJoinedEvents);
         progressBar = view.findViewById(R.id.progressBarJoinedEvents);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
