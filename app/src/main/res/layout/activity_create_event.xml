@@ -8,91 +8,114 @@
     android:layout_height="match_parent"
     android:padding="24dp"
     android:background="@drawable/bg_gradient"
-
-    android:layout_marginTop="20dp"
     tools:context=".CreateEventActivity">
 
-    <!-- Event Title -->
-    <EditText
-        android:id="@+id/titleEt"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/titleCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Event Title"
-        android:background="@drawable/edittext_filled_background"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/gray_600"
-        android:inputType="textPersonName"
-        android:maxLines="1"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Event Description -->
-    <EditText
-        android:id="@+id/descEt"
+        <EditText
+            android:id="@+id/titleEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Title"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_600"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/descCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Event Description"
-        android:background="@drawable/edittext_filled_background"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/gray_600"
-        android:inputType="textMultiLine"
-        android:minLines="3"
-        android:maxLines="5"
-        app:layout_constraintTop_toBottomOf="@id/titleEt"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toBottomOf="@id/titleCard"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <EditText
-        android:id="@+id/dateEt"
+        <EditText
+            android:id="@+id/descEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Description"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_600"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:maxLines="5"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/dateCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Event Date"
-        android:background="@drawable/edittext_filled_background"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/gray_600"
-        android:focusable="false"
-        android:clickable="true"
-        app:layout_constraintTop_toBottomOf="@id/descEt"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toBottomOf="@id/descCard"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Create Button -->
+        <EditText
+            android:id="@+id/dateEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Date"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_600"
+            android:focusable="false"
+            android:clickable="true"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.card.MaterialCardView>
 
-    <EditText
-        android:id="@+id/timeEt"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/timeCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:background="@drawable/edittext_filled_background"
-        android:clickable="true"
-        android:focusable="false"
-        android:hint="Event Time"
-        android:padding="12dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/gray_600"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toBottomOf="@id/dateCard"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/descEt" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/timeEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Time"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_600"
+            android:focusable="false"
+            android:clickable="true"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.card.MaterialCardView>
 
     <Button
         android:id="@+id/createBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="24dp"
         android:backgroundTint="@color/purple_500"
         android:padding="12dp"
         android:text="Create Event"
         android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@id/timeCard"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dateEt" />
-
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

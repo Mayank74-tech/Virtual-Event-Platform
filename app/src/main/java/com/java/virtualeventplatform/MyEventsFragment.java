@@ -61,30 +61,31 @@ public class MyEventsFragment extends Fragment {
         String currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         db.collection("Events")
-                .whereEqualTo("hostId", currentUserId) // ✅ Only fetch current user's events
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (task.getResult().isEmpty()) {
-
-                            Toast.makeText(getContext(), "No events created by you", Toast.LENGTH_SHORT).show();
-                        } else {
-                            eventList.clear();
-                            for (DocumentSnapshot doc : task.getResult()) {
-
-                                Event event = doc.toObject(Event.class);
-                                if (event != null) {
-                                    event.setEventId(doc.getId());
-                                    eventList.add(event);
-                                }
-                            }
-                            eventAdapter.updateEvents(eventList);
-                        }
-                    } else {
-
-                        Toast.makeText(getContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                .whereEqualTo("hostId", currentUserId) // ✅ Only listen to current user's events
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
                     }
+
+                    if (value == null || value.isEmpty()) {
+                        Toast.makeText(getContext(), "No events created by you", Toast.LENGTH_SHORT).show();
+                        eventList.clear();
+                        eventAdapter.updateEvents(eventList);
+                        return;
+                    }
+
+                    eventList.clear();
+                    for (DocumentSnapshot doc : value) {
+                        Event event = doc.toObject(Event.class);
+                        if (event != null) {
+                            event.setEventId(doc.getId());
+                            eventList.add(event);
+                        }
+                    }
+                    eventAdapter.updateEvents(eventList);
                 });
+
     }
 
     @Override

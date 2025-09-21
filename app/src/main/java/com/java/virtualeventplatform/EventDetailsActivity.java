@@ -76,7 +76,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         // Join Video
         joinVideoButton.setOnClickListener(v -> {
             if ("live".equals(status)) {
-                Intent intent = new Intent(this, VideoCallActivity.class);
+                Intent intent = new Intent(this, ConferenceActivity.class);
                 intent.putExtra("eventId", eventId);
                 startActivity(intent);
             } else {

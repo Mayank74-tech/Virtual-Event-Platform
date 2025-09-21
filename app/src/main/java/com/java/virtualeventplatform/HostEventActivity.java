@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -22,6 +23,7 @@ public class HostEventActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String eventId;
     private String currentUserId;
+    private TextView eventTitle, eventDescription, eventDate,eventTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +37,18 @@ public class HostEventActivity extends AppCompatActivity {
         // Get Event ID
         eventId = getIntent().getStringExtra("eventId");
 
+        eventTitle = findViewById(R.id.eventTitleHost);
+        eventDescription = findViewById(R.id.eventDescriptionHost);
+        eventDate = findViewById(R.id.eventDateHost);
+        eventTime = findViewById(R.id.eventTime);
+
         // Init Buttons
         startChatBtn = findViewById(R.id.startChatBtn);
         startVideoBtn = findViewById(R.id.startVideoBtn);
         endEventBtn = findViewById(R.id.endEventBtn);
 
+
+        loadEventDetails();
         // Start Chat
         startChatBtn.setOnClickListener(v -> {
             db.collection("Events").document(eventId)
@@ -61,7 +70,7 @@ public class HostEventActivity extends AppCompatActivity {
                     .update("status", "live")
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Video started!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(this, VideoCallActivity.class);
+                        Intent intent = new Intent(this, ConferenceActivity.class);
                         intent.putExtra("eventId", eventId);
                         startActivity(intent);
                     })
@@ -95,4 +104,25 @@ public class HostEventActivity extends AppCompatActivity {
         });
 
     }
+    private void loadEventDetails() {
+        db.collection("Events").document(eventId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String title = documentSnapshot.getString("title");
+                        String description = documentSnapshot.getString("description");
+                        String date = documentSnapshot.getString("date");
+                        String time = documentSnapshot.getString("time");
+
+                        eventTitle.setText(title != null ? title : "No Title");
+                        eventDescription.setText(description != null ? description : "No Description");
+                        eventDate.setText(date != null ? date : "No Date");
+                        eventTime.setText(time!=null?time:"No mentioned");
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to load event: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
+    }
 }
+

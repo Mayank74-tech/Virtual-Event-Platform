@@ -8,13 +8,18 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.java.virtualeventplatform.adapters.EventAdapter;
 import com.java.virtualeventplatform.models.Event;
 
@@ -29,6 +34,7 @@ public class JoinedEventsFragment extends Fragment implements EventAdapter.OnIte
 
     private FirebaseFirestore db;
     private String currentUserId;
+    private ListenerRegistration listenerRegistration;
 
     public JoinedEventsFragment() {
         // Required empty public constructor
@@ -44,84 +50,97 @@ public class JoinedEventsFragment extends Fragment implements EventAdapter.OnIte
         progressBar = view.findViewById(R.id.progressBarJoinedEvents);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new EventAdapter(joinedEvents, this); // ✅ correct listener
+        adapter = new EventAdapter(joinedEvents, this);
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
         currentUserId = FirebaseAuth.getInstance().getUid();
 
-        loadJoinedEvents();
+        if (currentUserId != null) {
+            listenToJoinedEvents();
+        } else {
+            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
+        }
 
         return view;
     }
 
-    private void loadJoinedEvents() {
+    private void listenToJoinedEvents() {
         progressBar.setVisibility(View.VISIBLE);
 
-        db.collection("JoinedEvents")
+        listenerRegistration = db.collection("JoinedEvents")
                 .whereEqualTo("userId", currentUserId)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    joinedEvents.clear();
-
-                    if (querySnapshot.isEmpty()) {
+                .addSnapshotListener((joinedSnapshot, e) -> {
+                    if (e != null) {
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "No joined events found", Toast.LENGTH_SHORT).show();
-                        adapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    // Temporary list to accumulate events before notifying adapter
-                    List<Event> tempList = new ArrayList<>();
+                    if (joinedSnapshot == null || joinedSnapshot.isEmpty()) {
+                        joinedEvents.clear();
+                        adapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getContext(), "No joined events found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                    int total = querySnapshot.size();
-                    int[] processedCount = {0};
-
-                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                    // Collect all eventIds
+                    List<String> eventIds = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : joinedSnapshot) {
                         String eventId = doc.getString("eventId");
-
                         if (eventId != null) {
-                            db.collection("Events").document(eventId)
-                                    .get()
-                                    .addOnSuccessListener(eventSnapshot -> {
-                                        processedCount[0]++;
-                                        if (eventSnapshot.exists()) {
-                                            Event event = eventSnapshot.toObject(Event.class);
-                                            if (event != null) {
-                                                event.setEventId(eventId);
-                                                tempList.add(event);
-                                            }
-                                        }
-
-                                        // Only update adapter after all events are processed
-                                        if (processedCount[0] == total) {
-                                            joinedEvents.addAll(tempList);
-                                            adapter.notifyDataSetChanged();
-                                            progressBar.setVisibility(View.GONE);
-                                        }
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        processedCount[0]++;
-                                        if (processedCount[0] == total) {
-                                            joinedEvents.addAll(tempList);
-                                            adapter.notifyDataSetChanged();
-                                            progressBar.setVisibility(View.GONE);
-                                        }
-                                    });
-                        } else {
-                            processedCount[0]++;
+                            eventIds.add(eventId);
                         }
                     }
-                })
-                .addOnFailureListener(e -> {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    if (eventIds.isEmpty()) {
+                        joinedEvents.clear();
+                        adapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.GONE);
+                        return;
+                    }
+
+                    // Now listen to events in real-time
+                    db.collection("Events")
+                            .whereIn("eventId", eventIds) // Make sure your Events docs have "eventId" field
+                            .addSnapshotListener((eventSnapshot, err) -> {
+                                progressBar.setVisibility(View.GONE);
+
+                                if (err != null) {
+                                    Toast.makeText(getContext(), "Error: " + err.getMessage(), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                if (eventSnapshot != null && !eventSnapshot.isEmpty()) {
+                                    joinedEvents.clear();
+                                    for (DocumentSnapshot eventDoc : eventSnapshot) {
+                                        Event event = eventDoc.toObject(Event.class);
+                                        if (event != null) {
+                                            event.setEventId(eventDoc.getId()); // Use docId as fallback
+                                            joinedEvents.add(event);
+                                        }
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                } else {
+                                    joinedEvents.clear();
+                                    adapter.notifyDataSetChanged();
+                                    Toast.makeText(getContext(), "No events found", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 });
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (listenerRegistration != null) {
+            listenerRegistration.remove();
+        }
+    }
+
+    @Override
     public void onItemClick(Event event) {
-        // Open EventDetailsActivity with fromJoined flag
         Intent intent = new Intent(getContext(), EventDetailsActivity.class);
         intent.putExtra("eventId", event.getEventId());
         intent.putExtra("fromJoined", true);

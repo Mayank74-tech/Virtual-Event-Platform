@@ -29,6 +29,7 @@ public class HomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
 
+
         });
 
         viewPager = findViewById(R.id.viewPager);
@@ -37,6 +38,19 @@ public class HomeActivity extends AppCompatActivity {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
+
+        viewPager.setPageTransformer((page, position) -> {
+            float absPos = Math.abs(position);
+
+            // Scale down pages as they move away
+            page.setScaleY(0.85f + (1 - absPos) * 0.15f);
+
+            // Fade out pages as they move away
+            page.setAlpha(0.5f + (1 - absPos) * 0.5f);
+
+            // Optional: slight translation for depth effect
+            page.setTranslationX(-position * page.getWidth() / 3);
+        });
 
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -51,6 +65,15 @@ public class HomeActivity extends AppCompatActivity {
 
 
         ExtendedFloatingActionButton fabAddEvent = findViewById(R.id.fabAddEvent);
+        fabAddEvent.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(300)
+                .setInterpolator(new android.view.animation.OvershootInterpolator())
+                .start();
+
 
         fabAddEvent.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, CreateEventActivity.class);

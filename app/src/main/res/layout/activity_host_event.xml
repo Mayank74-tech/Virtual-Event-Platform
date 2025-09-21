@@ -51,6 +51,14 @@
             android:text="Host Event Date"
             android:textColor="#DDDDDD"
             android:textSize="16sp" />
+        <TextView
+            android:id="@+id/eventTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Host Event Time"
+            android:textColor="#DDDDDD"
+            android:textSize="16sp" />
 
         <!-- Event Description -->
         <TextView
