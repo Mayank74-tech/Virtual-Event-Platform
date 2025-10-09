@@ -11,5 +11,13 @@
     <color name="teal_200">#80CBC4</color>
     <color name="fab_gradient">#FF6A00</color>
 
+    <!-- Bottom Nav States -->
+    <color name="nav_item_selected">#1E88E5</color>
+    <color name="nav_item_unselected">#9E9E9E</color>
+
+    <!-- Backgrounds -->
+    <color name="background_light">#F5F5F5</color>
+    <color name="background_surface">#FFFFFF</color>
+
 
 </resources>

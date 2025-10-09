@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.*;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.OutputStream;
@@ -33,15 +34,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-
-    private String generatedOtp = "";
-    private static final int RC_SIGN_IN = 100;
-
     private GoogleSignInClient mGoogleSignInClient;
 
-    // 🔑 Replace with your SendGrid API Key
-    private static final String SENDGRID_API_KEY = "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";
-    private static final String FROM_EMAIL = "mayankkumarsaini7465@gmail.com";
+    private static final int RC_SIGN_IN = 100;
+    private String generatedOtp = "";
+
+    // ⚠️ For testing only! Replace with your test key and verified sender
+    private static final String SENDGRID_API_KEY = "";
+    private static final String FROM_EMAIL = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,49 +58,36 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Google SignIn setup
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        setupGoogleSignIn();
 
-        // Send OTP Button
         sendOtpBtn.setOnClickListener(v -> sendOtp());
-
-        // Verify OTP Button
         verifyOtpBtn.setOnClickListener(v -> verifyOtp());
-
-        // Google SignIn
         googleSignInBtn.setOnClickListener(v -> signInWithGoogle());
 
         if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
+            startActivity(new Intent(this, HomeActivity.class));
             finish();
-            return;
         }
     }
 
+    // ---------------- SEND OTP ----------------
     private void sendOtp() {
-        String email = emailEt.getText().toString();
+        String email = emailEt.getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(this, "Enter email", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Generate OTP
         generatedOtp = String.valueOf(new Random().nextInt(900000) + 100000);
 
-        // Save OTP in Firestore with expiry
         Map<String, Object> otpData = new HashMap<>();
         otpData.put("otp", generatedOtp);
         otpData.put("timestamp", System.currentTimeMillis());
 
         db.collection("otps").document(email).set(otpData)
-                .addOnSuccessListener(aVoid -> {
-                    sendOtpEmail(email, generatedOtp);
-                })
-                .addOnFailureListener(e -> Log.e("Register", "Error saving OTP", e));
+                .addOnSuccessListener(aVoid -> sendOtpEmail(email, generatedOtp))
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to save OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void sendOtpEmail(String toEmail, String otp) {
@@ -114,13 +101,13 @@ public class RegisterActivity extends AppCompatActivity {
                 conn.setDoOutput(true);
 
                 JSONObject emailData = new JSONObject();
-                emailData.put("personalizations", new org.json.JSONArray()
-                        .put(new JSONObject().put("to", new org.json.JSONArray()
-                                .put(new JSONObject().put("email", toEmail)))));
-
+                JSONArray personalizations = new JSONArray()
+                        .put(new JSONObject().put("to",
+                                new JSONArray().put(new JSONObject().put("email", toEmail))));
+                emailData.put("personalizations", personalizations);
                 emailData.put("from", new JSONObject().put("email", FROM_EMAIL));
                 emailData.put("subject", "Your OTP Code");
-                emailData.put("content", new org.json.JSONArray()
+                emailData.put("content", new JSONArray()
                         .put(new JSONObject()
                                 .put("type", "text/plain")
                                 .put("value", "Your OTP is: " + otp)));
@@ -131,49 +118,75 @@ public class RegisterActivity extends AppCompatActivity {
                 os.close();
 
                 int responseCode = conn.getResponseCode();
-                Log.d("SendGrid", "Response Code: " + responseCode);
-
                 runOnUiThread(() -> {
                     if (responseCode == 202) {
                         Toast.makeText(this, "OTP sent to email", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(this, "Failed to send OTP", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to send OTP (code " + responseCode + ")", Toast.LENGTH_SHORT).show();
                     }
                 });
+                conn.disconnect();
 
             } catch (Exception e) {
                 Log.e("SendGrid", "Error sending email", e);
-                runOnUiThread(() -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                runOnUiThread(() ->
+                        Toast.makeText(this, "SendGrid error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         });
     }
 
+    // ---------------- VERIFY OTP ----------------
     private void verifyOtp() {
-        String enteredOtp = otpEt.getText().toString();
-        String email = emailEt.getText().toString();
-        String password = passwordEt.getText().toString();
+        String enteredOtp = otpEt.getText().toString().trim();
+        String email = emailEt.getText().toString().trim();
+        String password = passwordEt.getText().toString().trim();
 
-        if (enteredOtp.equals(generatedOtp)) {
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user != null) {
-                                saveUserToFirestore(user);
-                            }
-                            Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
-                            finish();
-                        } else {
-                            Toast.makeText(this, "Auth Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else {
-            Toast.makeText(this, "Invalid OTP", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(enteredOtp)) {
+            Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        db.collection("otps").document(email).get()
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        String savedOtp = document.getString("otp");
+                        if (enteredOtp.equals(savedOtp)) {
+                            createUser(email, password);
+                            db.collection("otps").document(email).delete();
+                        } else {
+                            Toast.makeText(this, "Invalid OTP", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "No OTP found. Resend it.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error verifying OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // Google Sign-In
+    // ---------------- CREATE USER ----------------
+    private void createUser(String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(result -> {
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if (user != null) saveUserToFirestore(user);
+                    Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, HomeActivity.class));
+                    finish();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Registration failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // ---------------- GOOGLE SIGN-IN ----------------
+    private void setupGoogleSignIn() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
     private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -182,14 +195,13 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                Log.w("GoogleSignIn", "Google sign in failed", e);
+                Log.w("GoogleSignIn", "Sign-in failed", e);
             }
         }
     }
@@ -200,37 +212,27 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) {
-                            saveUserToFirestore(user);
-                        }
-
-                        Toast.makeText(this, "Google SignIn Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
+                        if (user != null) saveUserToFirestore(user);
+                        Toast.makeText(this, "Google Sign-In successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(this, HomeActivity.class));
                         finish();
                     } else {
-                        Toast.makeText(this, "Google SignIn Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Google Sign-In failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
     private void saveUserToFirestore(FirebaseUser user) {
         if (user == null) return;
 
-        String userId = user.getUid();
-        String userEmail = user.getEmail() != null ? user.getEmail() : "No Email";
-        String userName = user.getDisplayName() != null ? user.getDisplayName() : "Anonymous";
-
         Map<String, Object> userData = new HashMap<>();
-        userData.put("email", userEmail);
-        userData.put("name", userName);
+        userData.put("email", user.getEmail());
+        userData.put("name", user.getDisplayName() != null ? user.getDisplayName() : "Anonymous");
         userData.put("createdAt", System.currentTimeMillis());
 
-        db.collection("Users").document(userId)
+        db.collection("Users").document(user.getUid())
                 .set(userData)
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "User saved"))
                 .addOnFailureListener(e -> Log.e("Firestore", "Error saving user", e));
     }
-
-
-
-
 }

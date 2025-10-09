@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.java.virtualeventplatform.adapters.EventAdapter;
@@ -21,6 +22,7 @@ import com.java.virtualeventplatform.models.Event;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class MyEventsFragment extends Fragment {
@@ -58,7 +60,7 @@ public class MyEventsFragment extends Fragment {
 
     private void loadMyEvents() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         db.collection("Events")
                 .whereEqualTo("hostId", currentUserId) // ✅ Only listen to current user's events

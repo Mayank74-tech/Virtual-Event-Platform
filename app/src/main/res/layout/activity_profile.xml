@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileActivity">
+
+    <!-- Top App Bar (Material Design) -->
+<com.google.android.material.appbar.AppBarLayout
+android:id="@+id/appBarLayout"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent">
+
+<androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    app:navigationIcon="@drawable/ic_arrow_back"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    app:title="Profile"
+    app:titleTextColor="@android:color/white" />
+
+</com.google.android.material.appbar.AppBarLayout>
+
+<ImageView
+android:id="@+id/ivProfileHeader"
+android:layout_width="0dp"
+android:layout_height="200dp"
+android:scaleType="centerCrop"
+
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+  />
+
+<de.hdodenhof.circleimageview.CircleImageView
+android:id="@+id/ivProfileAvatar"
+android:layout_width="100dp"
+android:layout_height="100dp"
+android:layout_marginBottom="-50dp"
+    android:src="@drawable/ic_profile"
+    app:civ_border_color="#FFFFFF"
+    app:civ_border_width="3dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/ivProfileHeader"
+    tools:src="@tools:sample/avatars" />
+
+    <!-- Name Card -->
+<com.google.android.material.card.MaterialCardView
+android:id="@+id/cardName"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:layout_marginTop="32dp"
+android:layout_marginStart="24dp"
+android:layout_marginEnd="24dp"
+app:cardBackgroundColor="@android:color/white"
+app:cardCornerRadius="16dp"
+app:cardElevation="8dp"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@id/ivProfileAvatar">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="John Doe"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        tools:text="John Doe" />
+
+    <EditText
+        android:id="@+id/tvUserHandle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:autofillHints="emailAddress"
+        android:gravity="center"
+        android:inputType="text"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="16sp"
+         />
+
+</LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
+
+    <!-- Bio Card -->
+<com.google.android.material.card.MaterialCardView
+android:id="@+id/cardBio"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:layout_marginTop="16dp"
+android:layout_marginStart="24dp"
+android:layout_marginEnd="24dp"
+app:cardBackgroundColor="@android:color/white"
+app:cardCornerRadius="16dp"
+app:cardElevation="4dp"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@id/cardName">
+
+<TextView
+    android:id="@+id/tvUserBio"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:text="Software developer passionate about AI, mobile apps, and creating modern UIs. Lover of coffee and code."
+    android:textColor="?attr/colorOnSurface"
+    android:textSize="16sp"
+    tools:text="Software developer..." />
+
+</com.google.android.material.card.MaterialCardView>
+
+
+
+<com.google.android.material.button.MaterialButton
+android:id="@+id/btnSignOut"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:layout_marginStart="24dp"
+android:layout_marginEnd="24dp"
+android:layout_marginBottom="24dp"
+android:text="Sign Out"
+android:textColor="?attr/colorOnPrimary"
+app:backgroundTint="?attr/colorError"
+    app:cornerRadius="12dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    tools:text="Sign Out" />
+
+    <!-- Edit Profile FAB (Floating Action Button) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabEditProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:contentDescription="TODO"
+        android:src="@drawable/ic_edit"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/btnSignOut"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardBio"
+        tools:src="@drawable/ic_edit" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
