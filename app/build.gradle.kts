@@ -43,11 +43,17 @@ dependencies {
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation("com.google.android.gms:play-services-auth:21.4.0")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
-    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_video_conference_android:+")
+    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_video_conference_android:2.4.2-beta")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.squareup.picasso:picasso:2.8")
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
+
     androidTestImplementation(libs.espresso.core)
 }

@@ -77,59 +77,55 @@ public class JoinedEventsFragment extends Fragment implements EventAdapter.OnIte
                         return;
                     }
 
+                    joinedEvents.clear();
+                    adapter.notifyDataSetChanged();
+
                     if (joinedSnapshot == null || joinedSnapshot.isEmpty()) {
-                        joinedEvents.clear();
-                        adapter.notifyDataSetChanged();
                         progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "No joined events found", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    // Collect all eventIds
-                    List<String> eventIds = new ArrayList<>();
+                    // For each joined event, fetch event details
                     for (QueryDocumentSnapshot doc : joinedSnapshot) {
                         String eventId = doc.getString("eventId");
                         if (eventId != null) {
-                            eventIds.add(eventId);
+                            db.collection("Events")
+                                    .document(eventId)
+                                    .addSnapshotListener((eventDoc, err) -> {
+                                        progressBar.setVisibility(View.GONE);
+
+                                        if (err != null) {
+                                            Toast.makeText(getContext(), "Error: " + err.getMessage(), Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+
+                                        if (eventDoc != null && eventDoc.exists()) {
+                                            Event event = eventDoc.toObject(Event.class);
+                                            if (event != null) {
+                                                event.setEventId(eventDoc.getId());
+
+                                                // Avoid duplicates
+                                                boolean exists = false;
+                                                for (Event eItem : joinedEvents) {
+                                                    if (eItem.getEventId().equals(event.getEventId())) {
+                                                        exists = true;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (!exists) {
+                                                    joinedEvents.add(event);
+                                                }
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    });
                         }
                     }
-
-                    if (eventIds.isEmpty()) {
-                        joinedEvents.clear();
-                        adapter.notifyDataSetChanged();
-                        progressBar.setVisibility(View.GONE);
-                        return;
-                    }
-
-                    // Now listen to events in real-time
-                    db.collection("Events")
-                            .whereIn("eventId", eventIds) // Make sure your Events docs have "eventId" field
-                            .addSnapshotListener((eventSnapshot, err) -> {
-                                progressBar.setVisibility(View.GONE);
-
-                                if (err != null) {
-                                    Toast.makeText(getContext(), "Error: " + err.getMessage(), Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                if (eventSnapshot != null && !eventSnapshot.isEmpty()) {
-                                    joinedEvents.clear();
-                                    for (DocumentSnapshot eventDoc : eventSnapshot) {
-                                        Event event = eventDoc.toObject(Event.class);
-                                        if (event != null) {
-                                            event.setEventId(eventDoc.getId()); // Use docId as fallback
-                                            joinedEvents.add(event);
-                                        }
-                                    }
-                                    adapter.notifyDataSetChanged();
-                                } else {
-                                    joinedEvents.clear();
-                                    adapter.notifyDataSetChanged();
-                                    Toast.makeText(getContext(), "No events found", Toast.LENGTH_SHORT).show();
-                                }
-                            });
                 });
     }
+
 
     @Override
     public void onDestroyView() {

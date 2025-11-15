@@ -5,15 +5,13 @@ import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -25,36 +23,42 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+public class UpcomingEventsActivity extends AppCompatActivity {
 
-
-public class UpcomingEventsFragment extends Fragment {
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
-    private List<Event> eventList = new ArrayList<>();
+    private final List<Event> eventList = new ArrayList<>();
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_upcoming_events, container, false);
-        recyclerView = view.findViewById(R.id.recyclerViewUpcomingEvents);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_upcoming_events);
+
+        // Handle system insets (status/nav bars)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        // Initialize RecyclerView
+        recyclerView = findViewById(R.id.recyclerViewUpcomingEvents);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
+        // Initialize Adapter
         eventAdapter = new EventAdapter(eventList, event -> {
-            if (getContext() != null) {
-                Intent intent = new Intent(getContext(), EventDetailsActivity.class);
-                intent.putExtra("eventId", event.getEventId());
-                intent.putExtra("fromJoined", false);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(this, EventDetailsActivity.class);
+            intent.putExtra("eventId", event.getEventId());
+            intent.putExtra("fromJoined", false);
+            startActivity(intent);
         });
 
         recyclerView.setAdapter(eventAdapter);
+
+        // Load events
         loadUpcomingEvents();
-        return view;
-
-
     }
 
     private void loadUpcomingEvents() {
@@ -64,7 +68,6 @@ public class UpcomingEventsFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     eventList.clear();
-
                     long now = System.currentTimeMillis();
 
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
@@ -74,18 +77,17 @@ public class UpcomingEventsFragment extends Fragment {
                             event.setEventId(doc.getId());
 
                             try {
-                                // Parse event date (assuming "yyyy-MM-dd")
                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                                 long eventTime = sdf.parse(event.getDate()).getTime();
 
                                 if (eventTime < now) {
-                                    // ❌ Delete expired event
+                                    // ❌ Delete expired events
                                     FirebaseFirestore.getInstance()
                                             .collection("Events")
                                             .document(event.getEventId())
                                             .delete();
                                 } else {
-                                    // ✅ Only add upcoming events that are not hosted by current user
+                                    // ✅ Add upcoming events not hosted by current user
                                     if (!event.getHostId().equals(currentUserId)) {
                                         eventList.add(event);
                                     }
@@ -97,10 +99,10 @@ public class UpcomingEventsFragment extends Fragment {
                     }
 
                     eventAdapter.updateEvents(eventList);
-                    Toast.makeText(getContext(), "Loaded " + eventList.size() + " events", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Loaded " + eventList.size() + " events", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 }
