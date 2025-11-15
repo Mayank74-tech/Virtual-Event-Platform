@@ -90,6 +90,8 @@ app:layout_constraintTop_toBottomOf="@id/ivProfileAvatar">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:hint="kd"
+
         android:autofillHints="emailAddress"
         android:gravity="center"
         android:inputType="text"
