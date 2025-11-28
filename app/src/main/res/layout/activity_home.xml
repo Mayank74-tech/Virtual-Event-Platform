@@ -14,13 +14,13 @@
         android:id="@+id/appName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MyEvnt"
+        android:text="My Events"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:textColor="@color/background_color"
-        android:paddingStart="16dp"
+        android:textColor="@android:color/white"
         android:paddingTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Container for Tabs + ViewPager -->
@@ -39,12 +39,12 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorColor="@color/primary_text_color"
-            app:tabSelectedTextColor="@color/primary_text_color"
-            app:tabTextColor="@android:color/darker_gray"
+            app:tabIndicatorColor="@android:color/white"
+            app:tabSelectedTextColor="@android:color/white"
+            app:tabTextColor="#B3FFFFFF"
             app:tabIndicatorHeight="3dp"
-            android:background="?attr/colorSurface"
-            android:elevation="4dp" />
+            android:background="@drawable/glass_background"
+            android:elevation="10dp" />
 
         <!-- ViewPager2 for Fragments -->
         <androidx.viewpager2.widget.ViewPager2
@@ -65,18 +65,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Event"
-        android:backgroundTint="@color/teal_200"
+        android:backgroundTint="#40FFFFFF"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        android:layout_margin="16dp"
+        android:elevation="12dp" />
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
+        android:background="@drawable/glass_background"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"

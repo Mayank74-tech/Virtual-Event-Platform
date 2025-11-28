@@ -19,14 +19,15 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            android:background="@drawable/glass_background"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="10dp">
 
             <ImageView
                 android:id="@+id/eventImageHost"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#E0E0E0"
+                android:background="#20FFFFFF"
                 android:contentDescription="Event Image"
                 android:scaleType="centerCrop" />
         </com.google.android.material.card.MaterialCardView>
@@ -36,9 +37,9 @@
             android:id="@+id/eventTitleHost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lineSpacingExtra="4dp"
+            android:lineSpacingExtra="6dp"
             android:text="Host Event Title"
-            android:textColor="#FFFFFF"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -49,15 +50,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Host Event Date"
-            android:textColor="#DDDDDD"
+            android:textColor="#CCFFFFFF"
             android:textSize="16sp" />
+
         <TextView
             android:id="@+id/eventTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Host Event Time"
-            android:textColor="#DDDDDD"
+            android:textColor="#CCFFFFFF"
             android:textSize="16sp" />
 
         <!-- Event Description -->
@@ -66,9 +68,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:lineSpacingExtra="6dp"
+            android:lineSpacingExtra="8dp"
             android:text="Event description..."
-            android:textColor="#EEEEEE"
+            android:textColor="@android:color/white"
             android:textSize="16sp" />
 
         <!-- Buttons with Material styling -->
@@ -78,11 +80,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Start Chat"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#4CAF50"
-            app:cornerRadius="8dp"
-            app:iconPadding="8dp"
-            app:iconTint="#FFFFFF" />
+            android:textColor="@android:color/white"
+            android:backgroundTint="#40FFFFFF"
+            android:elevation="10dp"
+            app:cornerRadius="22dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/startVideoBtn"
@@ -90,11 +91,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="Start Video"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#2196F3"
-            app:cornerRadius="8dp"
-            app:iconPadding="8dp"
-            app:iconTint="#FFFFFF" />
+            android:textColor="@android:color/white"
+            android:backgroundTint="#40FFFFFF"
+            android:elevation="10dp"
+            app:cornerRadius="22dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/endEventBtn"
@@ -102,11 +102,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="End Event"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#F44336"
-            app:cornerRadius="8dp"
-            app:iconPadding="8dp"
-            app:iconTint="#FFFFFF" />
+            android:textColor="@android:color/white"
+            android:backgroundTint="#40FFFFFF"
+            android:elevation="10dp"
+            app:cornerRadius="22dp" />
 
     </LinearLayout>
 </ScrollView>

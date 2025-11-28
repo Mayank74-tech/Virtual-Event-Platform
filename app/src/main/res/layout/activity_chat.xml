@@ -5,29 +5,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:background="@drawable/bg_gradient"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
     tools:context=".ChatActivity">
 
-    <!-- RecyclerView fills the space above the input area -->
+    <!-- Glassy chat list area -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerChat"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="8dp"
+        android:padding="12dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/inputLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Input area container -->
+    <!-- Glass input area container -->
     <LinearLayout
         android:id="@+id/inputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="?attr/colorSurface"
+        android:padding="10dp"
+        android:layout_margin="12dp"
+        android:background="@drawable/glass_background"
+        android:gravity="center_vertical"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -37,23 +41,26 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:autofillHints=""
             android:hint="@string/type_message"
             android:imeOptions="actionSend"
             android:inputType="text"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
             android:background="@drawable/edit_text_background"
-            android:padding="12dp" />
+            android:textColor="@android:color/white"
+            android:textColorHint="#80FFFFFF" />
 
         <ImageButton
             android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
             android:contentDescription="@string/send_message"
             android:src="@android:drawable/ic_menu_send"
-            android:backgroundTint="@color/purple_500"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
-            app:tint="?attr/colorPrimary" />
+            android:scaleType="centerInside"
+            android:background="@drawable/send_button_background"
+            android:padding="8dp"
+            app:tint="@android:color/white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

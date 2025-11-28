@@ -5,148 +5,147 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
     tools:context=".ProfileActivity">
 
     <!-- Top App Bar (Material Design) -->
-<com.google.android.material.appbar.AppBarLayout
-android:id="@+id/appBarLayout"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintTop_toTopOf="parent">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-<androidx.appcompat.widget.Toolbar
-    android:id="@+id/toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
-    app:navigationIcon="@drawable/ic_arrow_back"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    app:title="Profile"
-    app:titleTextColor="@android:color/white" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/glass_background"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="Profile"
+            app:titleTextColor="@android:color/white" />
 
-</com.google.android.material.appbar.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-<ImageView
-android:id="@+id/ivProfileHeader"
-android:layout_width="0dp"
-android:layout_height="200dp"
-android:scaleType="centerCrop"
+    <ImageView
+        android:id="@+id/ivProfileHeader"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/glass_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-  />
-
-<de.hdodenhof.circleimageview.CircleImageView
-android:id="@+id/ivProfileAvatar"
-android:layout_width="100dp"
-android:layout_height="100dp"
-android:layout_marginBottom="-50dp"
-    android:src="@drawable/ic_profile"
-    app:civ_border_color="#FFFFFF"
-    app:civ_border_width="3dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/ivProfileHeader"
-    tools:src="@tools:sample/avatars" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivProfileAvatar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="-50dp"
+        android:src="@drawable/ic_profile"
+        app:civ_border_color="#FFFFFF"
+        app:civ_border_width="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivProfileHeader"
+        tools:src="@tools:sample/avatars" />
 
     <!-- Name Card -->
-<com.google.android.material.card.MaterialCardView
-android:id="@+id/cardName"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:layout_marginTop="32dp"
-android:layout_marginStart="24dp"
-android:layout_marginEnd="24dp"
-app:cardBackgroundColor="@android:color/white"
-app:cardCornerRadius="16dp"
-app:cardElevation="8dp"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintTop_toBottomOf="@id/ivProfileAvatar">
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp">
-
-    <TextView
-        android:id="@+id/tvUserName"
-        android:layout_width="match_parent"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="John Doe"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        tools:text="John Doe" />
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/glass_background"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivProfileAvatar">
 
-    <EditText
-        android:id="@+id/tvUserHandle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:hint="kd"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-        android:autofillHints="emailAddress"
-        android:gravity="center"
-        android:inputType="text"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="16sp"
-         />
+            <TextView
+                android:id="@+id/tvUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="John Doe"
+                android:textColor="@android:color/white"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                tools:text="John Doe" />
 
-</LinearLayout>
+            <EditText
+                android:id="@+id/tvUserHandle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:hint="kd"
+                android:autofillHints="emailAddress"
+                android:gravity="center"
+                android:inputType="text"
+                android:textColor="@android:color/white"
+                android:textColorHint="#B3FFFFFF"
+                android:textSize="16sp" />
 
-</com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Bio Card -->
-<com.google.android.material.card.MaterialCardView
-android:id="@+id/cardBio"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:layout_marginTop="16dp"
-android:layout_marginStart="24dp"
-android:layout_marginEnd="24dp"
-app:cardBackgroundColor="@android:color/white"
-app:cardCornerRadius="16dp"
-app:cardElevation="4dp"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintTop_toBottomOf="@id/cardName">
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardBio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/glass_background"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardName">
 
-<TextView
-    android:id="@+id/tvUserBio"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="24dp"
-    android:text="Software developer passionate about AI, mobile apps, and creating modern UIs. Lover of coffee and code."
-    android:textColor="?attr/colorOnSurface"
-    android:textSize="16sp"
-    tools:text="Software developer..." />
+        <TextView
+            android:id="@+id/tvUserBio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:text="Software developer passionate about AI, mobile apps, and creating modern UIs. Lover of coffee and code."
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            tools:text="Software developer..." />
 
-</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
-
-
-<com.google.android.material.button.MaterialButton
-android:id="@+id/btnSignOut"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:layout_marginStart="24dp"
-android:layout_marginEnd="24dp"
-android:layout_marginBottom="24dp"
-android:text="Sign Out"
-android:textColor="?attr/colorOnPrimary"
-app:backgroundTint="?attr/colorError"
-    app:cornerRadius="12dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    tools:text="Sign Out" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSignOut"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="Sign Out"
+        android:textColor="@android:color/white"
+        app:backgroundTint="#40FFFFFF"
+        app:cornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Sign Out" />
 
     <!-- Edit Profile FAB (Floating Action Button) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -156,10 +155,11 @@ app:backgroundTint="?attr/colorError"
         android:layout_margin="24dp"
         android:contentDescription="TODO"
         android:src="@drawable/ic_edit"
-        app:backgroundTint="?attr/colorPrimary"
+        app:backgroundTint="#40FFFFFF"
+        app:tint="@android:color/white"
         app:layout_constraintBottom_toTopOf="@id/btnSignOut"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardBio"
         tools:src="@drawable/ic_edit" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
